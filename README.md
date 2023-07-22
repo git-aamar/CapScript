@@ -4,7 +4,7 @@
 CapScript is a Python console script that utilizes the YouTube Data API and the YouTube Transcript API to search for specific words or phrases within the captions (subtitles) of YouTube videos. The tool allows users to perform targeted searches across individual videos, multiple videos specified through a list, or videos associated with a particular YouTube channel. The matching captions and corresponding timestamps are collected and saved to a text file for easy reference.
 
 <p align="center">
-  <img src="https://github.com/yanpuri/CapScript/assets/121260820/6b215703-4f5c-4648-bb88-52870ecd0399" alt="Image Description">
+  <img src="https://github.com/yanpuri/CapScript/assets/121260820/1b394e81-45ef-4087-a450-e4d76fb70f85" alt="Image Description">
 </p>
 
 <p align="center"><strong><em>YouTube Caption Search Tool (CapScript)</em></strong></p>
