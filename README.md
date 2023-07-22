@@ -59,18 +59,18 @@ To use CapScript, you need a valid YouTube Data API key. Follow the steps below 
 4. **Restrict API Key (Optional but Recommended)**: To improve security, restrict the API key usage to only the APIs you need. You can set restrictions for the YouTube Data API within the "Credentials" settings.
 
 ## Finding a YouTube Channel ID
-To search for videos associated with a specific YouTube channel, you need the unique Channel ID. Here's how you can find it:
+To search for videos associated with a specific YouTube channel, you need a unique Channel ID. Here's how you can find it:
 
 1. **Open YouTube Channel**: Go to the YouTube channel you want to search within your web browser.
 
 2. **View Page Source**: Right-click on the page (anywhere) and select "View Page Source" or "Inspect" from the context menu.
 
-3. **Search for Channel ID**: In the page source view, press Ctrl+F (Windows/Linux) or Cmd+F (Mac) to open the search function. Enter "?channel_id" in the search box.
+3. **Search for Channel ID**: In the page source view, press `Ctrl+F` (Windows/Linux) or `Cmd+F` (Mac) to open the search function. Enter `?channel_id` in the search box.
 
 4. **Locate the Channel ID**: The search will highlight the "?channel_id" parameter in the page source, and the value next to it will be the Channel ID. It will typically be a string of letters and numbers.
    
 ## Notes
-- The "preferences.ini" file will be created and used to store the API key. This ensures you don't need to re-enter the key each time you run the script.
+- The `preferences.ini` file will be created and used to store the API key. This ensures you don't need to re-enter the key each time you run the script.
 - The script will skip videos without available captions or with disabled subtitles.
 - If you run the script multiple times, make sure to use the same API key to avoid API usage issues.
 
