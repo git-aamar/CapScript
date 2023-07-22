@@ -32,6 +32,7 @@ CapScript is a Python console script that utilizes the YouTube Data API and the 
    ```
    pip install youtube-transcript-api google-api-python-client google-auth-httplib2 google-auth-oauthlib configparser
    ```
+4. **Monospaced Font for Terminal**: To ensure proper display of Unicode characters in the terminal, it's recommended to use a monospaced font. Most modern terminals and command prompts support Unicode characters, but a monospaced font can improve readability. Some common monospaced fonts include "Courier New," "Consolas," "DejaVu Sans Mono," or "Monaco." [Most terminals opt for a (ttf) by default]
 
 ## Usage
 1. **API Key Configuration**: Before running the script, you need to configure the YouTube Data API key. If you have not set it previously or want to change it, the script will prompt you to enter a valid API key.
