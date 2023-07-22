@@ -20,8 +20,8 @@ CapScript is a Python console script that utilizes the YouTube Data API and the 
 
 ## Prerequisites
 1. **YouTube Data API Key**: The script requires a valid YouTube Data API key. If you don't have one, you can obtain it by following the [YouTube API Documentation](https://developers.google.com/youtube/registering_an_application).
-
-2. **Python Libraries**: Ensure you have the following Python libraries installed:
+2. **Python version >= 3.7**: [Download Python](https://www.python.org/downloads/)
+3. **Python Libraries**: Ensure you have the following Python libraries installed:
    - youtube_transcript_api
    - googleapiclient
    - google-auth-oauthlib
@@ -35,14 +35,17 @@ CapScript is a Python console script that utilizes the YouTube Data API and the 
 
 ## Usage
 1. **API Key Configuration**: Before running the script, you need to configure the YouTube Data API key. If you have not set it previously or want to change it, the script will prompt you to enter a valid API key.
-
-2. **Search Mode Selection**: The script will prompt you to choose a search mode: "Channel" or "Video". 
+2. Download the **CapScript.py** file and run it in cmd:
+  ```
+   python CapScript.py
+  ```
+3. **Search Mode Selection**: The script will prompt you to choose a search mode: "Channel" or "Video". 
    - "Channel": You will be asked to enter the YouTube channel ID, the number of videos to search, and the caption language.
    - "Video": You can either enter individual video IDs separated by commas or provide a path to a file containing the video IDs.
 
-3. **Search Term Input**: After selecting the search mode, enter the word or phrase you want to search for within the captions.
+4. **Search Term Input**: After selecting the search mode, enter the word or phrase you want to search for within the captions.
 
-4. **Results**: The script will begin the search process and display a progress indicator. After completion, it will show the total number of matches found. The matching captions and corresponding timestamps will be saved in a text file inside the "transcripts" folder.
+5. **Results**: The script will begin the search process and display a progress indicator. After completion, it will show the total number of matches found. The matching captions and corresponding timestamps will be saved in a text file inside the "transcripts" folder.
 
 ## Notes
 - The "preferences.ini" file will be created and used to store the API key. This ensures you don't need to re-enter the key each time you run the script.
