@@ -36,7 +36,11 @@ CapScript is a Python console script that utilizes the YouTube Data API and the 
 
 ## Usage
 1. **API Key Configuration**: Before running the script, you need to configure the YouTube Data API key. If you have not set it previously or want to change it, the script will prompt you to enter a valid API key.
-2. Download the `CapScript.py` file and run it in cmd:
+2. Download the `CapScript.py` file or use `git clone`:
+  ```
+   git clone https://github.com/yanpuri/CapScript.git
+  ```
+3. Inside the directory of the installation, run the script:
   ```
    python CapScript.py
   ```
