@@ -88,3 +88,8 @@ To search for videos associated with a specific YouTube channel, you need a uniq
 ![video](https://github.com/yanpuri/CapScript/assets/121260820/aa9199e4-bc56-4348-af83-f68270df40b0)
 ### Output:
 ![god_caption](https://github.com/yanpuri/CapScript/assets/121260820/d96ece6e-949c-4cfd-81d7-5c75e0c2d305)
+
+## Support Me
+If you liked this, please consider leaving a star ⭐
+
+If you found this to be useful, make sure to follow me for more 🙃
