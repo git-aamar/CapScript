@@ -55,7 +55,7 @@ CapScript is a Python console script that utilizes the YouTube Data API and the 
 ## Obtaining a YouTube Data API Key
 To use CapScript, you need a valid YouTube Data API key. Follow the steps below to obtain one:
 
-1. **Create a Google Developer Console Project**: Go to the Google Developer Console and create a new project.
+1. [**Create a Google Developer Console Project**](https://console.cloud.google.com/): Go to the Google Developer Console and create a new project.
 
 2. **Enable YouTube Data API**: Inside your project, navigate to the "APIs & Services" > "Dashboard" and click on the "+ ENABLE APIS AND SERVICES" button. Search for "YouTube Data API v3" and enable it.
 
