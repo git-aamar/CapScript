@@ -7,6 +7,10 @@ from youtube_transcript_api._errors import TranscriptsDisabled
 import os
 import time
 import configparser
+from datetime import timedelta
+from rich.table import Column
+from rich.progress import Progress, BarColumn, TextColumn, TimeElapsedColumn, TimeRemainingColumn
+from rich.text import Text
 
 def is_valid_api_key(api_key):
     youtube = build("youtube", "v3", developerKey=api_key)
@@ -136,52 +140,56 @@ def get_channel_videos(youtube, channel_id, language_code="en", max_results=10):
     total_videos = None
     fetched_video_ids = 0
     temp = 0
+    custom_style = "{task.description}: [dodger_blue2]{task.completed}/{task.total}[/dodger_blue2] •"
+    # Create the Progress object with the custom columns
+    progress = Progress(
+        TextColumn("[steel_blue]Fetching video IDs...", table_column=Column(ratio=1)),
+        BarColumn(bar_width=30, table_column=Column(ratio=2)),
+        "[yellow4][progress.percentage]{task.percentage:>3.0f}%[/yellow4] [white]•[/white]",
+        custom_style,
+        "[bright_red]ETA: [progress.time_remaining]{task.time_remaining}s",
+        expand=False,
+    )
 
-    while len(video_ids) < max_results and temp != max_results:
-        try:
-            response = youtube.search().list(
-                part="id",
-                channelId=channel_id,
-                maxResults=50,
-                order="date",
-                pageToken=nextPageToken,
-            ).execute()
-   
-            if not total_videos:
-                total_videos = min(max_results, int(response["pageInfo"]["totalResults"]))
-            print("\n")
-            for item in response["items"]:
-                if "videoId" in item["id"]:
-                    video_id = item["id"]["videoId"]
-                    temp += 1
-                    
-                    if video_id not in video_ids and has_captions(video_id, language_code):
+    # Update the Progress object with the total number of tasks (max_results)
+    with progress:
+        task = progress.add_task("Fetched IDs", total=max_results)
+
+        while len(video_ids) < max_results and temp != max_results:
+            try:
+                response = youtube.search().list(
+                    part="id",
+                    channelId=channel_id,
+                    maxResults=50,
+                    order="date",
+                    pageToken=nextPageToken,
+                ).execute()
+
+                if not total_videos:
+                    total_videos = min(max_results, int(response["pageInfo"]["totalResults"]))
+
+                for item in response["items"]:
+                    if "videoId" in item["id"]:
+                        video_id = item["id"]["videoId"]
+                        temp += 1
                         
-                        video_ids.append(video_id)
-                        # Show progress indicator for fetching video IDs
-                        fetched_video_ids += 1
-                    if fetched_video_ids != 0:
-                        eta = (time.time() - start_time) / fetched_video_ids * (total_videos - fetched_video_ids)
-                        progress = fetched_video_ids / total_videos
-                    else: 
-                        eta = (time.time() - start_time) / temp * (total_videos - fetched_video_ids)
-                        progress = temp / total_videos
-                    eta_formatted = time.strftime("%H:%M:%S", time.gmtime(eta))
-                    bar_length = 20
-                    bar = "■" * int(bar_length * progress)
-                    spaces = " " * (bar_length - len(bar))
-                    print(f"\rFetching Video IDs... [{bar}{spaces}] {int(progress * 100)}% Fetched IDs: {fetched_video_ids}/{max_results} ETA: {eta_formatted}", end="")
+                        if video_id not in video_ids and has_captions(video_id, language_code):
+                            video_ids.append(video_id)
+                            # Update the progress bar for each fetched video ID
+                            fetched_video_ids += 1
+                            progress.update(task, completed=fetched_video_ids)
 
                     if len(video_ids) >= max_results or temp == max_results:
                         break
 
-            nextPageToken = response.get("nextPageToken")
+                nextPageToken = response.get("nextPageToken")
 
-        except HttpError as e:
-            print(f"An HTTP error {e.resp.status} occurred: {e.content}")
+            except HttpError as e:
+                print(f"An HTTP error {e.resp.status} occurred: {e.content}")
 
-        if not nextPageToken:
-            break
+            if not nextPageToken:
+                break
+
     if not video_ids:
         print(f"\nNo videos found with captions in the selected language ({language_code}).")
         exit()
@@ -208,32 +216,26 @@ def main():
     search_type = prompt_search_type()
 
     if search_type == 'channel':
-
         channel_id = get_channel_id()
         max_results = get_max_results()
         language_code = get_language_code()
         video_ids = get_channel_videos(youtube, channel_id, language_code, max_results=max_results)
         
     else:
-    
         user_input = get_video_ids_input()
         input_str = ", ".join(user_input) if isinstance(user_input, list) else user_input
         language_code = get_language_code()
         
         if input_str.endswith(".txt"):
-      
             with open(input_str, "r") as file:
                 video_ids = [id.strip() for id in file.read().split(",")]
-                
         else:
-        
             video_ids = [id.strip() for id in input_str.split(",")]
 
     target_word = input("\nEnter the word (or phrase) to search in the captions: ")
     output_dir = "transcripts"
     
     if not os.path.exists(output_dir):
-    
         os.makedirs(output_dir)
 
     all_video_details = []
@@ -242,69 +244,68 @@ def main():
     start_time = time.time()
 
     print("\n")
-    
-    for i, video_id in enumerate(video_ids, 1):
-    
-      try:
-      
-        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[language_code])
-        transcript_items = []
-        video_match_count = 0
-        
-        for item in transcript:
-        
-            if target_word.lower() in item["text"].lower():
-                transcript_items.append(item)
-                video_match_count += 1
 
-        if transcript_items:
-        
-            match_count += video_match_count
-            title, channel_title, channel_id, date_uploaded, views = get_video_details(youtube, video_id)
-            video_details = f"Video Title: {title}\n"
-            video_details += f"Video ID: {video_id}\n"
-            video_details += f"Channel Name: {channel_title}\n"
-            video_details += f"Channel ID: {channel_id}\n"
-            video_details += f"Date Uploaded: {date_uploaded}\n"
-            video_details += f"Views: {format_views(views)}\n"
-            video_details += "Timestamps:\n"
+    with Progress(
+        TextColumn("[yellow]Searching...", justify="left"),
+        BarColumn(bar_width=30),
+        TextColumn("[yellow4][progress.percentage]{task.percentage:>3.0f}%[/yellow4]", justify="right"),
+        TextColumn("| [bright_red]ETA: {task.time_remaining}s[/bright_red] | ", justify="right"),
+        TextColumn("Found [green]{task.fields[match_count]}[/green] matches!"),  # Update this line
+    ) as progress:
+        task = progress.add_task("", total=len(video_ids), match_count=match_count)
 
-            for item in transcript_items:
+        for i, video_id in enumerate(video_ids, 1):
+            try:
+                transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[language_code])
+                transcript_items = []
+                video_match_count = 0
+
+                for item in transcript:
+                    if target_word.lower() in item["text"].lower():
+                        transcript_items.append(item)
+                        video_match_count += 1
+
+                if transcript_items:
+                    match_count += video_match_count
+
+                    title, channel_title, channel_id, date_uploaded, views = get_video_details(youtube, video_id)
+                    video_details = f"Video Title: {title}\n"
+                    video_details += f"Video ID: {video_id}\n"
+                    video_details += f"Channel Name: {channel_title}\n"
+                    video_details += f"Channel ID: {channel_id}\n"
+                    video_details += f"Date Uploaded: {date_uploaded}\n"
+                    video_details += f"Views: {format_views(views)}\n"
+                    video_details += "Timestamps:\n"
+
+                    for item in transcript_items:
+                        minutes, seconds = divmod(item['start'], 60)
+                        time_str = f"{int(minutes)}:{int(seconds):02d}"
+                        video_details += f"{time_str} - {item['text']}\n"
+
+                    video_details += "\n*****************************\n\n"
+                    all_video_details.append(video_details)
+
+                elapsed_time = time.time() - start_time
+                progress.update(task, completed=i, match_count=match_count)
+
+            except NoTranscriptFound as e:
+                print(f"No transcript found for video ID: {video_id}. Skipping...")
+                continue
             
-                minutes, seconds = divmod(item['start'], 60)
-                time_str = f"{int(minutes)}:{int(seconds):02d}"
-                video_details += f"{time_str} - {item['text']}\n"
-
-            video_details += "\n*****************************\n\n"
-            all_video_details.append(video_details)
-
-        elapsed_time = time.time() - start_time
-        progress = i / len(video_ids) * 100
-        eta = elapsed_time / i * (len(video_ids) - i)
-        eta_formatted = time.strftime("%H:%M:%S", time.gmtime(eta))
-        print(f"\rSearching... [{'■' * int(progress // 5)}{'=' * int(20 - progress // 5)}] {int(progress)}% Found {match_count} matches! ETA: {eta_formatted}", end="")
-      except NoTranscriptFound as e:
-      
-        print(f"No transcript found for video ID: {video_id}. Skipping...")
-        continue
-        
-      except TranscriptsDisabled as e:
-      
-        print(f"\nSubtitles are disabled for video ID: {video_id}. Skipping...")
-        continue
+            except TranscriptsDisabled as e:
+                print(f"\nSubtitles are disabled for video ID: {video_id}. Skipping...")
+                continue
 
     print(f"\n\nSearch finished!")
-    print(f"Found a total of {match_count} match{'s' if match_count != 1 else ''} in the captions.")
+    print(f"Found a total of {match_count} match{'es' if match_count != 1 else ''} in the captions.")
 
     output_file_name = f"{target_word}.txt"
     output_file_path = os.path.join(output_dir, output_file_name)
     with open(output_file_path, "w", encoding="utf-8") as output_file:
-    
         output_file.writelines(all_video_details)
 
     print(f"Generated .txt file at: {output_file_path}")
 
 if __name__ == "__main__":
-
     start_time = time.time()
     main()
