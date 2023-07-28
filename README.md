@@ -83,9 +83,9 @@ To search for videos associated with a specific YouTube channel, you need a uniq
 
 ## Images
 ### Channel search:
-![channel](https://github.com/yanpuri/CapScript/assets/121260820/49d25e8d-0fac-47fa-b65e-4ca1d9e4646b)
+![channel](https://github.com/yanpuri/CapScript/assets/121260820/59ef38af-1cfb-43bd-abe6-b348d3708b18)
 ### Video search (list):
-![video](https://github.com/yanpuri/CapScript/assets/121260820/aa9199e4-bc56-4348-af83-f68270df40b0)
+![video](https://github.com/yanpuri/CapScript/assets/121260820/5e016164-daca-4388-a8c8-5ff86f436d26)
 ### Output:
 ![god_caption](https://github.com/yanpuri/CapScript/assets/121260820/d96ece6e-949c-4cfd-81d7-5c75e0c2d305)
 
