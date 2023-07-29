@@ -141,7 +141,6 @@ def get_channel_videos(youtube, channel_id, language_code="en", max_results=10):
     fetched_video_ids = 0
     temp = 0
     custom_style = "{task.description}: [dodger_blue2]{task.completed}/{task.total}[/dodger_blue2] •"
-    # Create the Progress object with the custom columns
     progress = Progress(
         TextColumn("[steel_blue]Fetching video IDs...", table_column=Column(ratio=1)),
         BarColumn(bar_width=30, table_column=Column(ratio=2)),
@@ -150,8 +149,6 @@ def get_channel_videos(youtube, channel_id, language_code="en", max_results=10):
         "[bright_red]ETA: [progress.time_remaining]{task.time_remaining}s",
         expand=False,
     )
-
-    # Update the Progress object with the total number of tasks (max_results)
     with progress:
         task = progress.add_task("Fetched IDs", total=max_results)
 
@@ -175,7 +172,6 @@ def get_channel_videos(youtube, channel_id, language_code="en", max_results=10):
                         
                         if video_id not in video_ids and has_captions(video_id, language_code):
                             video_ids.append(video_id)
-                            # Update the progress bar for each fetched video ID
                             fetched_video_ids += 1
                             progress.update(task, completed=fetched_video_ids)
 
@@ -250,7 +246,7 @@ def main():
         BarColumn(bar_width=30),
         TextColumn("[yellow4][progress.percentage]{task.percentage:>3.0f}%[/yellow4]", justify="right"),
         TextColumn("| [bright_red]ETA: {task.time_remaining}s[/bright_red] | ", justify="right"),
-        TextColumn("Found [green]{task.fields[match_count]}[/green] matches!"),  # Update this line
+        TextColumn("Found [green]{task.fields[match_count]}[/green] matches!"),
     ) as progress:
         task = progress.add_task("", total=len(video_ids), match_count=match_count)
 
