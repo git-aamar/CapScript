@@ -110,6 +110,11 @@ def spinning_cursor():
       time.sleep(0.1)
       print(f"\r{cursor}", end="", flush=True)
 
+def format_time(seconds):
+    hours, remainder = divmod(seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
+
 def get_video_ids_from_file(file_path):
     try:
         with open(file_path, 'r') as file:
@@ -141,6 +146,7 @@ def get_channel_videos(youtube, channel_id, language_code="en", max_results=10):
     fetched_video_ids = 0
     temp = 0
     custom_style = "{task.description}: [dodger_blue2]{task.completed}/{task.total}[/dodger_blue2] •"
+   
     progress = Progress(
         TextColumn("[steel_blue]Fetching video IDs...", table_column=Column(ratio=1)),
         BarColumn(bar_width=30, table_column=Column(ratio=2)),
@@ -149,6 +155,7 @@ def get_channel_videos(youtube, channel_id, language_code="en", max_results=10):
         "[bright_red]ETA: [progress.time_remaining]{task.time_remaining}s",
         expand=False,
     )
+
     with progress:
         task = progress.add_task("Fetched IDs", total=max_results)
 
@@ -274,11 +281,10 @@ def main():
                     video_details += "Timestamps:\n"
 
                     for item in transcript_items:
-                        minutes, seconds = divmod(item['start'], 60)
-                        time_str = f"{int(minutes)}:{int(seconds):02d}"
-                        video_details += f"{time_str} - {item['text']}\n"
+                        time_str = format_time(item['start'])
+                        video_details += f"╳ {time_str} - {item['text']}\n"
 
-                    video_details += "\n*****************************\n\n"
+                    video_details += "\n══════════════════════════════════════════════\n\n"
                     all_video_details.append(video_details)
 
                 elapsed_time = time.time() - start_time
